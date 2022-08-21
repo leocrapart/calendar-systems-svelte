@@ -3,7 +3,7 @@
 
   // converter algorithm
 
-  let bisextile = true;
+  let bisextile = false;
 
   function generate_bion_days() {
     const alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -144,6 +144,15 @@
   $: normal_date_2 = bion_to_normal_date(bion_date_2);
 </script>
 
+<div class="flex justify-center">
+  <input type="checkbox" bind:checked={bisextile} />
+  <div class="px-1" />
+  {#if bisextile}
+    <label for="">bisextile year</label>
+  {:else}
+    <label for="" class="line-through">bisextile year</label>
+  {/if}
+</div>
 <div class="flex justify-center">
   <!-- converter normal -> bion -->
   <div>
