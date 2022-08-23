@@ -142,8 +142,41 @@
 
   let bion_date_2 = "aion 1er cycle";
   $: normal_date_2 = bion_to_normal_date(bion_date_2);
+
+  let left = { calendar: "Normal", date: "1 Janvier" };
+  let right = { calendar: "Bion", date: "aion 1er cycle" };
+
+  let left_calendar = "Normal";
+  let left_date = "1 Janvier";
+  let right_calendar = "Bion";
+  let right_date = "aion 1er cycle";
+
+  const convert_fn_for = {
+    normal: {
+      bion: normal_to_bion_date,
+    },
+    bion: {
+      normal: bion_to_normal_date,
+    },
+  };
+
+  $: convert_fn =
+    convert_fn_for[left_calendar.toLowerCase()][right_calendar.toLowerCase()];
+
+  $: right_date = convert_fn(left_date);
+
+  function switch_converter() {
+    const temp_calendar = left_calendar;
+    const temp_date = left_date;
+
+    left_calendar = right_calendar;
+    left_date = right_date;
+    right_calendar = temp_calendar;
+    right_date = temp_date;
+  }
 </script>
 
+<!-- bisextile year checkbox -->
 <div class="flex justify-center">
   <input type="checkbox" bind:checked={bisextile} />
   <div class="px-1" />
@@ -153,42 +186,44 @@
     <label for="" class="line-through">bisextile year</label>
   {/if}
 </div>
-<div class="flex justify-center">
-  <!-- converter normal -> bion -->
-  <div>
-    <div class="py-5" />
 
-    <div>Normal -> Bion</div>
-    <input type="text" bind:value={normal_date_1} />
+<div class="py-3" />
 
-    <div class="py-3" />
+<!-- converter -->
+<div class="width-screen flex flex-col">
+  <!-- top -->
+  <div class="bg-white flex justify-between p-2 border rounded-t-lg">
+    <div class="w-14 self-center">{left_calendar}</div>
+    <!-- converter icon -->
+    <button>
+      <svg
+        class="h-8 w-8 fill-gray-600 hover:fill-blue-600"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        on:click={switch_converter}
+      >
+        <path
+          d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z"
+        />
+      </svg>
+    </button>
 
-    <div class="bg-gray-300 p-2">=> {bion_date_1}</div>
-
-    <!-- feedback -->
-    {#if feedback}
-      <div>
-        <div>mauvais format</div>
-      </div>
-    {/if}
+    <div class="w-14 text-right self-center">{right_calendar}</div>
   </div>
 
-  <!-- converter bion -> normal -->
-  <div class="pl-40">
-    <div class="py-5" />
-
-    <div>Bion -> Normal</div>
-    <input type="text" bind:value={bion_date_2} />
-
-    <div class="py-3" />
-
-    <div class="bg-gray-300 p-2">=> {normal_date_2}</div>
-
-    <!-- feedback -->
-    {#if feedback}
-      <div>
-        <div>mauvais format</div>
-      </div>
-    {/if}
+  <!-- bot -->
+  <div class="inline-flex">
+    <input
+      class="border grow p-2 rounded-bl-lg"
+      type="text"
+      bind:value={left_date}
+    />
+    <input
+      class="border grow p-2 focus:outline-none rounded-br-lg"
+      type="text"
+      readonly
+      value={right_date}
+    />
   </div>
 </div>
